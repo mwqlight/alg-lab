@@ -23,6 +23,7 @@ public class DataInitializer implements CommandLineRunner {
             // 冒泡排序
             Algorithm bubbleSort = new Algorithm();
             bubbleSort.setName("冒泡排序");
+            bubbleSort.setAbbreviation("bubble");
             bubbleSort.setCategory("排序算法");
             bubbleSort.setSubcategory("比较排序");
             bubbleSort.setDescription("冒泡排序是一种简单的排序算法。它重复地走访过要排序的数列，一次比较两个元素，如果它们的顺序错误就把它们交换过来。走访数列的工作是重复地进行直到没有再需要交换，也就是说该数列已经排序完成。");
@@ -36,6 +37,7 @@ public class DataInitializer implements CommandLineRunner {
             // 快速排序
             Algorithm quickSort = new Algorithm();
             quickSort.setName("快速排序");
+            quickSort.setAbbreviation("quick");
             quickSort.setCategory("排序算法");
             quickSort.setSubcategory("比较排序");
             quickSort.setDescription("快速排序是对冒泡排序的一种改进。它的基本思想是：通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比另外一部分的所有数据都要小，然后再按此方法对这两部分数据分别进行快速排序，整个排序过程可以递归进行，以此达到整个数据变成有序序列。");
@@ -49,6 +51,7 @@ public class DataInitializer implements CommandLineRunner {
             // 插入排序
             Algorithm insertionSort = new Algorithm();
             insertionSort.setName("插入排序");
+            insertionSort.setAbbreviation("insertion");
             insertionSort.setCategory("排序算法");
             insertionSort.setSubcategory("比较排序");
             insertionSort.setDescription("插入排序是一种简单直观的排序算法。它的工作原理是通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。");

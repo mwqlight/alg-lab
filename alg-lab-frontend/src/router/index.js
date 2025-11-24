@@ -9,6 +9,12 @@ const routes = [
     component: Home
   },
   {
+    path: '/algorithm/abbreviation/:abbreviation',
+    name: 'AlgorithmDetailByAbbreviation',
+    component: AlgorithmDetail,
+    props: true
+  },
+  {
     path: '/algorithm/:id',
     name: 'AlgorithmDetail',
     component: AlgorithmDetail,

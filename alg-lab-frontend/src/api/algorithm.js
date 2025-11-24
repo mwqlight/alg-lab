@@ -4,6 +4,7 @@ export const algorithmApi = {
   getAllAlgorithms: () => request.get('/algorithms'),
   getAlgorithmById: (id) => request.get(`/algorithms/${id}`),
   getAlgorithmByName: (name) => request.get(`/algorithms/name/${name}`),
+  getAlgorithmByAbbreviation: (abbreviation) => request.get(`/algorithms/abbreviation/${abbreviation}`),
   getAlgorithmsByCategory: (category) => request.get(`/algorithms/category/${category}`),
   getAlgorithmsByCategoryAndSubcategory: (category, subcategory) => 
     request.get(`/algorithms/category/${category}/subcategory/${subcategory}`),

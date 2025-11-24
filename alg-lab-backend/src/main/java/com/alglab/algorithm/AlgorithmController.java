@@ -31,6 +31,12 @@ public class AlgorithmController {
         return algorithm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/abbreviation/{abbreviation}")
+    public ResponseEntity<Algorithm> getAlgorithmByAbbreviation(@PathVariable String abbreviation) {
+        Optional<Algorithm> algorithm = algorithmService.getAlgorithmByAbbreviation(abbreviation);
+        return algorithm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Algorithm>> getAlgorithmsByCategory(@PathVariable String category) {
         List<Algorithm> algorithms = algorithmService.getAlgorithmsByCategory(category);

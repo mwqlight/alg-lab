@@ -3,17 +3,19 @@ package com.alglab.algorithm;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "algorithms")
-public class Algorithm {
+public class Algorithm implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+    private String abbreviation;
     private String category;
     private String subcategory;
     private String description;

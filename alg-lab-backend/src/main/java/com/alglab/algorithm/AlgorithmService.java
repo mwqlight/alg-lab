@@ -27,6 +27,11 @@ public class AlgorithmService {
         return algorithmRepository.findByName(name);
     }
 
+    @Cacheable(value = "algorithms", key = "#abbreviation")
+    public Optional<Algorithm> getAlgorithmByAbbreviation(String abbreviation) {
+        return algorithmRepository.findByAbbreviation(abbreviation);
+    }
+
     @Cacheable(value = "algorithms", key = "'category_' + #category")
     public List<Algorithm> getAlgorithmsByCategory(String category) {
         return algorithmRepository.findByCategory(category);

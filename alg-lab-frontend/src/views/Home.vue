@@ -55,10 +55,11 @@
             <el-col :xs="24" :sm="12" :md="8" v-for="algorithm in algorithms" :key="algorithm.id">
               <el-card
                 class="algorithm-card"
-                @click="goToAlgorithm(algorithm.id)"
+                @click="goToAlgorithm(algorithm)"
               >
                 <template #header>
                   <span class="algorithm-name">{{ algorithm.name }}</span>
+                  <span v-if="algorithm.abbreviation" class="algorithm-abbreviation">({{ algorithm.abbreviation }})</span>
                 </template>
                 <div class="algorithm-info">
                   <p class="category-tag">
@@ -191,8 +192,12 @@ const handleCategoryClick = async (data) => {
   await loadAlgorithms()
 }
 
-const goToAlgorithm = (id) => {
-  router.push(`/algorithm/${id}`)
+const goToAlgorithm = (algorithm) => {
+  if (algorithm.abbreviation) {
+    router.push(`/algorithm/abbreviation/${algorithm.abbreviation}`)
+  } else {
+    router.push(`/algorithm/${algorithm.id}`)
+  }
 }
 
 const refreshAlgorithms = async () => {
@@ -247,6 +252,13 @@ onMounted(async () => {
   font-size: 18px;
   font-weight: bold;
   color: #333;
+}
+
+.algorithm-abbreviation {
+  font-size: 14px;
+  color: #667eea;
+  margin-left: 8px;
+  font-weight: normal;
 }
 
 .algorithm-info {

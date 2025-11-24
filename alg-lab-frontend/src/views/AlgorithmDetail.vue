@@ -56,6 +56,7 @@
             重置
           </el-button>
           <el-slider
+            v-if="animationSteps.length > 0"
             v-model="currentStep"
             :min="0"
             :max="maxStep"
@@ -130,7 +131,7 @@ const swappedIndices = ref([])
 const sortedIndices = ref([])
 const playSpeed = ref(1000) // 默认播放速度为1秒
 
-const maxStep = computed(() => animationSteps.value.length - 1)
+const maxStep = computed(() => Math.max(0, animationSteps.value.length - 1))
 
 const arrayMax = computed(() => {
   if (currentArray.value.length === 0) return 1
@@ -144,6 +145,13 @@ const loadAlgorithm = async () => {
       data = await algorithmApi.getAlgorithmById(route.params.id)
     } else if (route.params.name) {
       data = await algorithmApi.getAlgorithmByName(route.params.name)
+    } else if (route.params.abbreviation) {
+      data = await algorithmApi.getAlgorithmByAbbreviation(route.params.abbreviation)
+    } else {
+      // 无有效路由参数时直接报错
+      ElMessage.error('缺少有效算法参数')
+      goBack()
+      return
     }
     
     if (data) {

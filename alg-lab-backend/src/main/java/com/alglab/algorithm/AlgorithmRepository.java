@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface AlgorithmRepository extends JpaRepository<Algorithm, Long> {
     Optional<Algorithm> findByName(String name);
+    Optional<Algorithm> findByAbbreviation(String abbreviation);
     List<Algorithm> findByCategory(String category);
     List<Algorithm> findByCategoryAndSubcategory(String category, String subcategory);
 
