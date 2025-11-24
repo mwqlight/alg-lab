@@ -73,7 +73,8 @@
             :format-tooltip="(value) => `${value}ms`"
           />
         </div>
-        <div class="animation-container">
+        <!-- 排序算法动画展示 -->
+        <div v-if="algorithm.category === '排序算法'" class="animation-container">
           <div
             v-for="(value, index) in currentArray"
             :key="index"
@@ -86,6 +87,33 @@
             :style="{ height: `${(value / arrayMax) * 150}px` }"
           >
             <span class="array-value">{{ value }}</span>
+          </div>
+        </div>
+        
+        <!-- 活动选择问题动画展示 -->
+        <div v-else-if="algorithm.abbreviation === 'activity-selection'" class="activity-animation-container">
+          <div class="time-axis">
+            <div v-for="time in timeAxis" :key="time" class="time-mark">
+              <span class="time-label">{{ time }}</span>
+            </div>
+          </div>
+          <div class="activities-container">
+            <div
+              v-for="(activity, index) in currentActivities"
+              :key="index"
+              class="activity-bar"
+              :class="{
+                'selected': selectedIndices.includes(index),
+                'current': currentIndex === index,
+                'compared': comparedIndices.includes(index)
+              }"
+              :style="{
+                left: `${activity.start * 10}%`,
+                width: `${(activity.end - activity.start) * 10}%`
+              }"
+            >
+              <span class="activity-label">{{ index + 1 }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -129,6 +157,10 @@ const currentArray = ref([])
 const comparedIndices = ref([])
 const swappedIndices = ref([])
 const sortedIndices = ref([])
+const currentActivities = ref([])
+const selectedIndices = ref([])
+const currentIndex = ref(-1)
+const timeAxis = ref([])
 const playSpeed = ref(1000) // 默认播放速度为1秒
 
 const maxStep = computed(() => Math.max(0, animationSteps.value.length - 1))
@@ -232,26 +264,43 @@ const updateAnimation = () => {
   if (animationSteps.value.length === 0) return
   
   const step = animationSteps.value[currentStep.value]
-  currentArray.value = step.array || []
-  comparedIndices.value = step.compared || []
-  sortedIndices.value = step.sorted || []
   
-  // 处理swapped字段，如果是布尔值则表示上一步是否交换了元素
-  if (typeof step.swapped === 'boolean') {
-    // 如果是交换步骤，高亮显示最后两个比较的元素
-    if (step.swapped && comparedIndices.value.length >= 2) {
-      swappedIndices.value = comparedIndices.value.slice(-2)
+  // 处理排序算法动画
+  if (algorithm.value.category === '排序算法') {
+    currentArray.value = step.array || []
+    comparedIndices.value = step.compared || []
+    sortedIndices.value = step.sorted || []
+    
+    // 处理swapped字段，如果是布尔值则表示上一步是否交换了元素
+    if (typeof step.swapped === 'boolean') {
+      // 如果是交换步骤，高亮显示最后两个比较的元素
+      if (step.swapped && comparedIndices.value.length >= 2) {
+        swappedIndices.value = comparedIndices.value.slice(-2)
+      } else {
+        swappedIndices.value = []
+      }
     } else {
-      swappedIndices.value = []
+      // 如果是数组，则直接使用
+      swappedIndices.value = step.swapped || []
     }
-  } else {
-    // 如果是数组，则直接使用
-    swappedIndices.value = step.swapped || []
+    
+    // 如果是最后一步，标记所有元素为已排序
+    if (currentStep.value === maxStep.value) {
+      sortedIndices.value = Array.from({ length: currentArray.value.length }, (_, i) => i)
+    }
   }
-  
-  // 如果是最后一步，标记所有元素为已排序
-  if (currentStep.value === maxStep.value) {
-    sortedIndices.value = Array.from({ length: currentArray.value.length }, (_, i) => i)
+  // 处理活动选择问题动画
+  else if (algorithm.value.abbreviation === 'activity-selection') {
+    currentActivities.value = step.activities || []
+    selectedIndices.value = step.selected || []
+    currentIndex.value = step.current || -1
+    comparedIndices.value = step.compared || []
+    
+    // 生成时间轴
+    if (currentActivities.value.length > 0) {
+      const maxEnd = Math.max(...currentActivities.value.map(activity => activity.end))
+      timeAxis.value = Array.from({ length: maxEnd + 1 }, (_, i) => i)
+    }
   }
 }
 
@@ -333,5 +382,100 @@ h3 {
   color: #666;
   min-width: 80px;
   text-align: right;
+}
+/* 活动选择问题动画样式 */
+.activity-animation-container {
+  width: 100%;
+  height: 200px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  position: relative;
+}
+
+.time-axis {
+  width: 100%;
+  height: 20px;
+  background-color: #e4e7ed;
+  border-radius: 10px;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.time-mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: #c0c4cc;
+  transform: translateX(-50%);
+}
+
+.time-mark:nth-child(odd) .time-label {
+  display: block;
+}
+
+.time-mark:nth-child(even) .time-label {
+  display: none;
+}
+
+.time-label {
+  position: absolute;
+  top: 25px;
+  font-size: 12px;
+  color: #606266;
+  transform: translateX(-50%);
+}
+
+.activities-container {
+  width: 100%;
+  height: 100px;
+  position: relative;
+}
+
+.activity-bar {
+  position: absolute;
+  top: 0;
+  height: 40px;
+  background-color: #67c23a;
+  border-radius: 20px;
+  margin: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.activity-bar:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.activity-bar.selected {
+  background-color: #409eff;
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
+}
+
+.activity-bar.current {
+  background-color: #e6a23c;
+  opacity: 1;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(230, 162, 60, 0.4);
+}
+
+.activity-bar.compared {
+  background-color: #f56c6c;
+  opacity: 1;
+}
+
+.activity-label {
+  pointer-events: none;
 }
 </style>
